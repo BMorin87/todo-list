@@ -1,23 +1,29 @@
 import "./style.css";
+import { format, subDays } from 'date-fns';
 
 class Todo {
-  constructor() {
-    this.title = "Default";
-    this.description = "Default";
-    this.dueDate = "Next week";
-    this.priority = "High";
+  constructor(
+    title = "Your Todo",
+    dueDate = subDays(new Date(), -1),
+    description = "Todo Description",
+    priority,
+  ) {
+    this.title = title;
+    this.description = description;
+    this.dueDate = dueDate;
+    if (priority !== null) {this.priority = priority}
     this.notes = "";
     this.complete = false;
   }
 }
 
 class Project {
-  constructor() {
-    this.name = "Project 1";
-    this.todoList = [];
-    this.todoList.push(new Todo());
+  constructor(name = "Project 1") {
+    this.name = name;
+    this.todoList = [new Todo()];
   }
 }
 
 const project = new Project();
-console.log(project.todoList[0].title);
+const formattedDate = format(project.todoList[0].dueDate, 'yyyy-MM-dd');
+console.log(formattedDate);
