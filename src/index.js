@@ -37,20 +37,15 @@ class Project {
 class ScreenController {
   constructor() {
     this.projectList = [];
-    this.LoadDefaultProject()
+    this.LoadDefaultProject(this.projectList);
     this.activeProject = this.projectList[0];
 
-    const addProjectButton = document.getElementById("addProject");
-    const addTodoButton = document.getElementById("addTodo");
-    const completeCheckbox = document.getElementById("completion")
-    addProjectButton.addEventListener('click', () => this.AddProjectOnClick());
-    addTodoButton.addEventListener('click', () => this.AddTodoOnClick());
-    completeCheckbox.addEventListener('change', (event) => this.CompleteOnChange(event))
+    this.CreateEventListeners();
   }
 
-  LoadDefaultProject() {
+  LoadDefaultProject(list) {
     const defaultProject = new Project();
-    this.projectList.push(defaultProject);
+    list.push(defaultProject);
 
     // Create a default todo card.
     const todo = this.projectList[0].todoList[0];
@@ -59,6 +54,19 @@ class ScreenController {
 
     // Add the default project to the dropdown menu.
     this.AddProjectToSelector(defaultProject)
+  }
+
+  CreateEventListeners() {
+    const addProjectButton = document.getElementById("addProject");
+    const addTodoButton = document.getElementById("addTodo");
+    //const completeCheckbox = document.querySelector(".completion")
+    const checkboxes = document.querySelectorAll(".completion");
+
+    addProjectButton.addEventListener('click', () => this.AddProjectOnClick());
+    addTodoButton.addEventListener('click', () => this.AddTodoOnClick());
+    checkboxes.forEach((box) => {
+      box.addEventListener('change', (event) => this.CompleteOnChange(event));
+    })
   }
 
   AddProjectOnClick() {
@@ -89,21 +97,25 @@ class ScreenController {
     <p class="todoDescription">${todo.description}</p>
     <p class="todoDueDate">${formattedDate}</p>
     <p class="todoPriority">
-      <select id="priorityDropdown">
+      <select class="priorityDropdown">
         <option value="High">High</option>
         <option value="Medium">Medium</option>
         <option value="Low">Low</option>
       </select>
        priority
     </p>
-    <label><input type="checkbox" id="completion"> Complete</label>
+    <label><input type="checkbox" name="complete" class="completion"> Complete</label>
     `
-    const dropdown = todoCard.querySelector("select");
+    this.CreateDropdownListener(todo, todoCard);
+    return todoCard;
+  }
+
+  CreateDropdownListener(todo, card) {
+    const dropdown = card.querySelector("select");
     dropdown.value = todo.priority;
     if (todo.priority === "High") {todoCard.classList.add("highPriority");}
     else if (todo.priority === "Low") {todoCard.classList.add("lowPriority");}
     dropdown.addEventListener("change", (event) => this.PriorityOnChange(event))
-    return todoCard;
   }
 
   PriorityOnChange(event) {
