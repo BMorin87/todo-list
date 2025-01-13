@@ -25,7 +25,7 @@ header {
     margin: 10px;
 }
 
-#projectSelector {
+.projectSelector {
     font-size: 18px;
 }
 
@@ -33,7 +33,7 @@ header {
     height: 1.5rem;
 }
 
-#todoContainer {
+.todoContainer {
     background-color: black;
     display: grid;
     gap: 10px;
@@ -41,6 +41,7 @@ header {
     padding: 8px;
 }
 
+/* Lowest to highest specificity for the card's background color */
 .todoCard {
     background-color: lightyellow;
 }
@@ -51,4 +52,8 @@ header {
 
 .todoCard.lowPriority {
     background-color: lightblue;
+}
+
+.todoContainer>.todoCard.complete {
+    background-color: green;
 }

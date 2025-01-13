@@ -42,8 +42,10 @@ class ScreenController {
 
     const addProjectButton = document.getElementById("addProject");
     const addTodoButton = document.getElementById("addTodo");
+    const completeCheckbox = document.getElementById("completion")
     addProjectButton.addEventListener('click', () => this.AddProjectOnClick());
     addTodoButton.addEventListener('click', () => this.AddTodoOnClick());
+    completeCheckbox.addEventListener('change', (event) => this.CompleteOnChange(event))
   }
 
   LoadDefaultProject() {
@@ -71,6 +73,13 @@ class ScreenController {
     this.AddCardToContainer(newCard);
   }
 
+  CompleteOnChange(event) {
+    const checkbox = event.target;
+    const card = checkbox.closest(".todoCard");
+    card.classList.remove("complete");
+    if (checkbox.checked) {card.classList.add("complete");}
+  }
+
   CreateTodoCard(todo) {
     const todoCard = document.createElement("div");
     todoCard.classList.add("todoCard")
@@ -87,7 +96,7 @@ class ScreenController {
       </select>
        priority
     </p>
-    <label><input type="checkbox" class="completion"> Todo complete</label>
+    <label><input type="checkbox" id="completion"> Complete</label>
     `
     const dropdown = todoCard.querySelector("select");
     dropdown.value = todo.priority;
@@ -107,12 +116,12 @@ class ScreenController {
   }
 
   AddCardToContainer(card) {
-    const todoContainer = document.getElementById("todoContainer");
+    const todoContainer = document.querySelector(".todoContainer");
     todoContainer.appendChild(card);
   }
 
   AddProjectToSelector(project) {
-    const selector = document.getElementById("projectSelector");
+    const selector = document.querySelector(".projectSelector");
     const newOption = document.createElement('option');
     newOption.text = project.name;
     selector.add(newOption);
