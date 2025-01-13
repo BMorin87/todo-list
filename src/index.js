@@ -6,7 +6,7 @@ class Todo {
     title = "My Todo",
     dueDate = subDays(new Date(), -1), // Default to tomorrow.
     description = "Todo Description",
-    priority,
+    priority = "Medium",
   ) {
     this.setTitle(title);
     this.setDescription(description);
@@ -27,9 +27,11 @@ class Todo {
 
 class Project {
   constructor(name = "My Project") {
-    this.name = name;
+    this.setName(name);
     this.todoList = [new Todo()];
   }
+
+  setName = (name) => {this.name = name}
 }
 
 class ScreenController {
@@ -40,8 +42,8 @@ class ScreenController {
 
     const addProjectButton = document.getElementById("addProject");
     const addTodoButton = document.getElementById("addTodo");
-    addProjectButton.addEventListener('click', () => this.AddProjectClick());
-    addTodoButton.addEventListener('click', () => this.AddTodoClick());
+    addProjectButton.addEventListener('click', () => this.AddProjectOnClick());
+    addTodoButton.addEventListener('click', () => this.AddTodoOnClick());
   }
 
   LoadDefaultProject() {
@@ -57,13 +59,13 @@ class ScreenController {
     this.AddProjectToSelector(defaultProject)
   }
 
-  AddProjectClick() {
+  AddProjectOnClick() {
     const newProject = new Project("New Project");
     this.projectList.push(newProject);
     this.AddProjectToSelector(newProject);
   }
 
-  AddTodoClick() {
+  AddTodoOnClick() {
     const newTodo = new Todo("New Todo");
     const newCard = this.CreateTodoCard(newTodo);
     this.AddCardToContainer(newCard);
@@ -77,10 +79,31 @@ class ScreenController {
     <h3 class="todoTitle">${todo.title}</h3>
     <p class="todoDescription">${todo.description}</p>
     <p class="todoDueDate">${formattedDate}</p>
-    <p class="todoPriority">${todo.priority}</p>
+    <p class="todoPriority">
+      <select id="priorityDropdown">
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+       priority
+    </p>
     <label><input type="checkbox" class="completion"> Todo complete</label>
     `
+    const dropdown = todoCard.querySelector("select");
+    dropdown.value = todo.priority;
+    if (todo.priority === "High") {todoCard.classList.add("highPriority");}
+    else if (todo.priority === "Low") {todoCard.classList.add("lowPriority");}
+    dropdown.addEventListener("change", (event) => this.PriorityOnChange(event))
     return todoCard;
+  }
+
+  PriorityOnChange(event) {
+    const dropdown = event.target;
+    const priority = dropdown.value;
+    const card = dropdown.closest(".todoCard");
+    card.classList.remove("highPriority", "lowPriority");
+    if (priority === "High") {card.classList.add("highPriority");}
+    else if (priority === "Low") {card.classList.add("lowPriority");}
   }
 
   AddCardToContainer(card) {

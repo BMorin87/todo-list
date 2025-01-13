@@ -6,6 +6,7 @@ body {
 header {
     background-color: lightgrey;
     color: black;
+    padding: 8px;
 }
 
 .content {
@@ -20,6 +21,7 @@ header {
 }
 
 #addTodo {
+    font-size: 14px;
     margin: 10px;
 }
 
@@ -36,8 +38,17 @@ header {
     display: grid;
     gap: 10px;
     grid-template-columns: repeat(auto-fill, minmax(200px, 300px));
+    padding: 8px;
 }
 
 .todoCard {
-    background-color: white;
+    background-color: lightyellow;
+}
+
+.todoCard.highPriority {
+    background-color: orange;
+}
+
+.todoCard.lowPriority {
+    background-color: lightblue;
 }
