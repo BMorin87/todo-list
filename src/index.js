@@ -56,17 +56,26 @@ class ScreenController {
     this.AddProjectToSelector(defaultProject)
   }
 
+  AddCardToContainer(card) {
+    const todoContainer = document.querySelector(".todoContainer");
+    todoContainer.appendChild(card);
+  }
+
+  AddProjectToSelector(project) {
+    const selector = document.getElementById("projectSelector");
+    const newOption = document.createElement('option');
+    newOption.text = project.name;
+    selector.add(newOption);
+  }
+
   CreatePageEventListeners() {
     const addProjectButton = document.getElementById("addProject");
     const addTodoButton = document.getElementById("addTodo");
-    //const completeCheckbox = document.querySelector(".completion")
-    const checkboxes = document.querySelectorAll(".completion");
+    const projectDropdown = document.getElementById("projectSelector");
 
     addProjectButton.addEventListener('click', () => this.AddProjectOnClick());
     addTodoButton.addEventListener('click', () => this.AddTodoOnClick());
-    checkboxes.forEach((box) => {
-      box.addEventListener('change', (event) => this.CompleteOnChange(event));
-    })
+    projectDropdown.addEventListener('change', (event) => this.ProjectDropdownOnChange(event));
   }
 
   AddProjectOnClick() {
@@ -77,17 +86,21 @@ class ScreenController {
 
   AddTodoOnClick() {
     const newTodo = new Todo("New Todo");
+    this.activeProject.todoList.push(newTodo);
     const newCard = this.CreateTodoCard(newTodo);
     this.AddCardToContainer(newCard);
   }
 
-  CompleteOnChange(event) {
-    const checkbox = event.target;
-    const card = checkbox.closest(".todoCard");
-    console.log(card);
-    card.classList.remove("complete");
-    console.log("Complete event.");
-    if (checkbox.checked) {card.classList.add("complete");}
+  ProjectDropdownOnChange(event) {
+    const dropdown = event.target;
+    const newIndex = dropdown.selectedIndex;
+    this.activeProject = this.projectList[newIndex];
+    const cardContainer = document.querySelector(".todoContainer");
+    cardContainer.innerHTML = '';
+    this.activeProject.todoList.forEach(todo => {
+      const newCard = this.CreateTodoCard(todo);
+      this.AddCardToContainer(newCard);
+    });
   }
 
   CreateTodoCard(todo) {
@@ -132,16 +145,13 @@ class ScreenController {
     else if (priority === "Low") {card.classList.add("lowPriority");}
   }
 
-  AddCardToContainer(card) {
-    const todoContainer = document.querySelector(".todoContainer");
-    todoContainer.appendChild(card);
-  }
-
-  AddProjectToSelector(project) {
-    const selector = document.querySelector(".projectSelector");
-    const newOption = document.createElement('option');
-    newOption.text = project.name;
-    selector.add(newOption);
+  CompleteOnChange(event) {
+    const checkbox = event.target;
+    const card = checkbox.closest(".todoCard");
+    console.log(card);
+    card.classList.remove("complete");
+    console.log("Complete event.");
+    if (checkbox.checked) {card.classList.add("complete");}
   }
 }
 
