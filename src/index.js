@@ -40,7 +40,7 @@ class ScreenController {
     this.LoadDefaultProject(this.projectList);
     this.activeProject = this.projectList[0];
 
-    this.CreateEventListeners();
+    this.CreatePageEventListeners();
   }
 
   LoadDefaultProject(list) {
@@ -56,7 +56,7 @@ class ScreenController {
     this.AddProjectToSelector(defaultProject)
   }
 
-  CreateEventListeners() {
+  CreatePageEventListeners() {
     const addProjectButton = document.getElementById("addProject");
     const addTodoButton = document.getElementById("addTodo");
     //const completeCheckbox = document.querySelector(".completion")
@@ -84,7 +84,9 @@ class ScreenController {
   CompleteOnChange(event) {
     const checkbox = event.target;
     const card = checkbox.closest(".todoCard");
+    console.log(card);
     card.classList.remove("complete");
+    console.log("Complete event.");
     if (checkbox.checked) {card.classList.add("complete");}
   }
 
@@ -106,16 +108,19 @@ class ScreenController {
     </p>
     <label><input type="checkbox" name="complete" class="completion"> Complete</label>
     `
-    this.CreateDropdownListener(todo, todoCard);
+    this.CreateCardEventListeners(todo, todoCard);
     return todoCard;
   }
 
-  CreateDropdownListener(todo, card) {
+  CreateCardEventListeners(todo, card) {
     const dropdown = card.querySelector("select");
     dropdown.value = todo.priority;
     if (todo.priority === "High") {todoCard.classList.add("highPriority");}
     else if (todo.priority === "Low") {todoCard.classList.add("lowPriority");}
     dropdown.addEventListener("change", (event) => this.PriorityOnChange(event))
+
+    const checkbox = card.querySelector(".completion");
+    checkbox.addEventListener('change', (event) => this.CompleteOnChange(event));
   }
 
   PriorityOnChange(event) {
