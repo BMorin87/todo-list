@@ -82,6 +82,7 @@ class ScreenController {
     const newProject = new Project("New Project");
     this.projectList.push(newProject);
     this.AddProjectToSelector(newProject);
+    this.PopulateStorage();
   }
 
   AddTodoOnClick() {
@@ -89,6 +90,14 @@ class ScreenController {
     this.activeProject.todoList.push(newTodo);
     const newCard = this.CreateTodoCard(newTodo);
     this.AddCardToContainer(newCard);
+    this.PopulateStorage();
+  }
+
+  PopulateStorage() {
+    const listString = JSON.stringify(this.projectList);
+    const activeString = JSON.stringify(this.activeProject);
+    localStorage.setItem("projectList", listString);
+    localStorage.setItem("activeProject", activeString);
   }
 
   ProjectDropdownOnChange(event) {
