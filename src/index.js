@@ -37,10 +37,49 @@ class Project {
 class ScreenController {
   constructor() {
     this.projectList = [];
-    this.LoadDefaultProject(this.projectList);
-    this.activeProject = this.projectList[0];
-
+    if (this.StorageAvailable()) {
+      this.LoadSavedProject();
+    }
+    else {
+      this.LoadDefaultProject(this.projectList);
+      this.activeProject = this.projectList[0];
+    }
     this.CreatePageEventListeners();
+  }
+
+  StorageAvailable() {
+    try {
+      const projectList = localStorage.getItem("projectList");
+      if (projectList) return true;
+    }
+    catch (e) {
+      e instanceof DOMException &&
+      e.name === "QuotaExceededError";
+    }
+  }
+
+  PopulateStorage() {
+    const listString = JSON.stringify(this.projectList);
+    const activeString = JSON.stringify(this.activeProject);
+    localStorage.setItem("projectList", listString);
+    localStorage.setItem("activeProject", activeString);
+  }
+
+  LoadSavedProject() {
+    const activeProjectString = localStorage.getItem("activeProject");
+    this.activeProject = JSON.parse(activeProjectString);
+    const projectListString = localStorage.getItem("projectList");
+    this.projectList = JSON.parse(projectListString);
+
+    this.activeProject.todoList.forEach((todo) => {
+      const card = this.CreateTodoCard(todo);
+      this.AddCardToContainer(card);
+    });
+    this.projectList.forEach((project) => {
+      this.AddProjectToSelector(project);
+    });
+    const projectSelector = document.getElementById("projectSelector");
+    projectSelector.value = this.activeProject.name;
   }
 
   LoadDefaultProject(list) {
@@ -65,16 +104,19 @@ class ScreenController {
     const selector = document.getElementById("projectSelector");
     const newOption = document.createElement('option');
     newOption.text = project.name;
+    newOption.value = project.name;
     selector.add(newOption);
   }
 
   CreatePageEventListeners() {
     const addProjectButton = document.getElementById("addProject");
     const addTodoButton = document.getElementById("addTodo");
+    const clearButton = document.getElementById("clearAll");
     const projectDropdown = document.getElementById("projectSelector");
 
     addProjectButton.addEventListener('click', () => this.AddProjectOnClick());
     addTodoButton.addEventListener('click', () => this.AddTodoOnClick());
+    clearButton.addEventListener('click', () => this.ClearButtonOnClick());
     projectDropdown.addEventListener('change', (event) => this.ProjectDropdownOnChange(event));
   }
 
@@ -93,11 +135,15 @@ class ScreenController {
     this.PopulateStorage();
   }
 
-  PopulateStorage() {
-    const listString = JSON.stringify(this.projectList);
-    const activeString = JSON.stringify(this.activeProject);
-    localStorage.setItem("projectList", listString);
-    localStorage.setItem("activeProject", activeString);
+  ClearButtonOnClick() {
+    const projectSelector = document.getElementById("projectSelector");
+    const todoContainer = document.querySelector(".todoContainer");
+    projectSelector.innerHTML = "";
+    todoContainer.innerHTML = "";
+    this.projectList = [];
+    this.activeProject = "";
+    this.LoadDefaultProject(this.projectList);
+    this.activeProject = this.projectList[0];
   }
 
   ProjectDropdownOnChange(event) {
