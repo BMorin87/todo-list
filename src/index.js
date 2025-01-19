@@ -183,8 +183,8 @@ class ScreenController {
   CreateCardEventListeners(todo, card) {
     const dropdown = card.querySelector("select");
     dropdown.value = todo.priority;
-    if (todo.priority === "High") {todoCard.classList.add("highPriority");}
-    else if (todo.priority === "Low") {todoCard.classList.add("lowPriority");}
+    if (todo.priority === "High") {card.classList.add("highPriority");}
+    else if (todo.priority === "Low") {card.classList.add("lowPriority");}
     dropdown.addEventListener("change", (event) => this.PriorityOnChange(event))
 
     const checkbox = card.querySelector(".completion");
@@ -210,4 +210,4 @@ class ScreenController {
   }
 }
 
-const controller = new ScreenController();
+new ScreenController();
